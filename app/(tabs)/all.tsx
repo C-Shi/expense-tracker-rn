@@ -1,15 +1,9 @@
-import { Text, View } from "react-native";
+import { useContext } from "react";
+import { ExpenseContext } from "@/store/ExpenseContext";
+import ExpenseList from "@/components/ExpenseList";
 
 export default function All() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>All Expense</Text>
-    </View>
-  );
+  const expenseCtx = useContext(ExpenseContext);
+
+  return <ExpenseList expenseList={expenseCtx.expenses} />;
 }
