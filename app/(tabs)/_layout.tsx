@@ -1,8 +1,9 @@
 import { TouchableOpacity } from "react-native";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function TabLayout() {
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -11,6 +12,9 @@ export default function TabLayout() {
           <TouchableOpacity
             style={{
               marginRight: 20,
+            }}
+            onPress={() => {
+              router.push("/modal");
             }}
           >
             <FontAwesome name="plus" size={24} color="black" />
