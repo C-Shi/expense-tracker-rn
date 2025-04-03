@@ -1,14 +1,7 @@
 import NewExpense from "@/components/NewExpense";
 import EditExpense from "@/components/EditExpense";
 import { useLocalSearchParams } from "expo-router";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Keyboard,
-} from "react-native";
+import { ScrollView } from "react-native";
 
 export default function Modal() {
   // register a ?page query params for the URL

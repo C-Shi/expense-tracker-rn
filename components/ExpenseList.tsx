@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet } from "react-native";
 import ExpenseListItem from "@/components/ExpenseListItem";
 import { Expense } from "@/models";
+import COLORS from "@/constant/COLORS";
 
 export default function ExpenseList({
   expenseList,
@@ -19,7 +20,8 @@ export default function ExpenseList({
 
 const expenseListStyle = StyleSheet.create({
   expensesContainer: {
-    marginHorizontal: 20,
     flex: 1,
+    backgroundColor: COLORS.tint,
+    padding: 10,
   },
 });

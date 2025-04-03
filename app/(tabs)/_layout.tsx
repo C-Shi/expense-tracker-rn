@@ -1,5 +1,6 @@
 import { TouchableOpacity } from "react-native";
 import { Tabs, useRouter } from "expo-router";
+import COLORS from "@/constant/COLORS";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function TabLayout() {
@@ -7,6 +8,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerStyle: {
+          backgroundColor: COLORS.tint,
+        },
+        tabBarStyle: {
+          backgroundColor: COLORS.tint,
+        },
         headerTitleAlign: "left",
         headerRight: () => (
           <TouchableOpacity

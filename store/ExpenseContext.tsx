@@ -4,7 +4,7 @@ import { Expense } from "@/models";
 interface ExpenseContextModel {
   expenses: Expense[];
   addExpense: (expense: { date: string; name: string; amount: number }) => void;
-  removeExpense: (expense: Expense) => void;
+  removeExpense: (id: string) => void;
   updateExpense: (expense: Expense) => void;
   getRecent: (num: number | null) => Expense[];
 }
@@ -38,8 +38,8 @@ export default function ExpenseContextProvider({
     setExpense((prev) => [...prev, new Expense(expense)]);
   };
 
-  const removeExpense = (expense: Expense): void => {
-    setExpense((prev) => prev.filter((e) => e.id !== expense.id));
+  const removeExpense = (id: string): void => {
+    setExpense((prev) => prev.filter((e) => e.id !== id));
   };
 
   const getRecent = (num: number): Expense[] => {
