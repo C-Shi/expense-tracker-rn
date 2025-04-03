@@ -11,9 +11,17 @@ export default function TabLayout() {
         headerStyle: {
           backgroundColor: COLORS.tint,
         },
+        headerTitleStyle: {
+          color: COLORS.bright,
+        },
         tabBarStyle: {
           backgroundColor: COLORS.tint,
         },
+        tabBarLabelStyle: {
+          fontSize: 14,
+        },
+        tabBarActiveTintColor: COLORS.bright,
+        tabBarInactiveTintColor: COLORS.light,
         headerTitleAlign: "left",
         headerRight: () => (
           <TouchableOpacity
@@ -24,7 +32,7 @@ export default function TabLayout() {
               router.push("/modal?page=new");
             }}
           >
-            <FontAwesome name="plus" size={24} color="black" />
+            <FontAwesome name="plus" size={24} color={COLORS.bright} />
           </TouchableOpacity>
         ),
       }}
@@ -34,8 +42,12 @@ export default function TabLayout() {
         options={{
           title: "Recent",
           tabBarLabelPosition: "below-icon",
-          tabBarIcon: () => (
-            <FontAwesome name="filter" size={26} color="black" />
+          tabBarIcon: ({ focused }) => (
+            <FontAwesome
+              name="filter"
+              size={26}
+              color={focused ? COLORS.bright : COLORS.light}
+            />
           ),
         }}
       ></Tabs.Screen>
@@ -44,8 +56,12 @@ export default function TabLayout() {
         options={{
           title: "All Expenses",
           tabBarLabelPosition: "below-icon",
-          tabBarIcon: () => (
-            <FontAwesome name="calendar" size={26} color="black" />
+          tabBarIcon: ({ focused }) => (
+            <FontAwesome
+              name="calendar"
+              size={26}
+              color={focused ? COLORS.bright : COLORS.light}
+            />
           ),
         }}
       ></Tabs.Screen>

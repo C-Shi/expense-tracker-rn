@@ -2,12 +2,13 @@ import { Stack } from "expo-router/stack";
 import ExpenseContextProvider from "@/store/ExpenseContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { router } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StatusBar } from "react-native";
 import COLORS from "@/constant/COLORS";
 
 export default function RootLayout() {
   return (
     <ExpenseContextProvider>
+      <StatusBar barStyle="light-content"></StatusBar>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
