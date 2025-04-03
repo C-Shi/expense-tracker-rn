@@ -5,6 +5,7 @@ interface ExpenseContextModel {
   expenses: Expense[];
   addExpense: (expense: { date: string; name: string; amount: number }) => void;
   removeExpense: (expense: Expense) => void;
+  updateExpense: (expense: Expense) => void;
   getRecent: (num: number | null) => Expense[];
 }
 
@@ -47,10 +48,22 @@ export default function ExpenseContextProvider({
       .slice(0, num + 1);
   };
 
+  const updateExpense = (expense: Expense): void => {
+    setExpense((prev) =>
+      prev.map((e) => {
+        if (e.id == expense.id) {
+          return { ...expense, id: e.id };
+        }
+        return e;
+      })
+    );
+  };
+
   const value = {
     expenses,
     addExpense,
     removeExpense,
+    updateExpense,
     getRecent,
   } as ExpenseContextModel;
 

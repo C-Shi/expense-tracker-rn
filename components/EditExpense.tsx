@@ -13,21 +13,26 @@ import {
 } from "react-native";
 import { ExpenseContext } from "@/store/ExpenseContext";
 
-export default function NewExpense() {
-  const [newExpense, setNewExpense] = useState({
-    date: new Date(),
-    name: "",
-    amount: 0,
-  });
-
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+export default function EditExpense({ id }: { id: string }) {
   const expensesCtx = useContext(ExpenseContext);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const editingExpense = {
+    ...expensesCtx.expenses.find((e) => e.id == id),
+  } as Expense;
+
+  const [expense, setExpense] = useState({
+    id: editingExpense.id,
+    name: editingExpense.name,
+    amount: editingExpense.amount.toString(),
+    date: editingExpense.date,
+  });
 
   const navigation = useNavigation();
 
   useEffect(() => {
     navigation.setOptions({
-      title: "New Expense",
+      title: "Update Expense",
       headerStyle: {
         backgroundColor: COLORS.tint,
       },
@@ -42,21 +47,29 @@ export default function NewExpense() {
   }, []);
 
   function onChangeName(name: string) {
-    setNewExpense({ ...newExpense, name });
+    setExpense({ ...expense, name });
   }
 
-  function onChangeAmount(val: string) {
-    const amount = Number(val);
-    setNewExpense({ ...newExpense, amount });
+  function onChangeAmount(amount: string) {
+    setExpense({ ...expense, amount });
   }
 
   function onDateChange(val: Date | undefined) {
-    setNewExpense({ ...newExpense, date: val! });
+    const date = val?.toISOString().split("T")[0]!;
+    setExpense({ ...expense, date });
   }
 
-  function onAddExpense() {
-    if (newExpense.amount > 0 && newExpense.date && newExpense.name !== "") {
-      expensesCtx.addExpense(new Expense(newExpense));
+  function saveExpense() {
+    if (
+      expense &&
+      parseFloat(expense.amount) > 0 &&
+      expense.date &&
+      expense.name !== ""
+    ) {
+      expensesCtx.updateExpense({
+        ...expense,
+        amount: parseFloat(expense.amount),
+      } as Expense);
       navigation.goBack();
     } else {
       alert("Please Fill all the required field");
@@ -69,7 +82,7 @@ export default function NewExpense() {
         <Text style={styles.label}>What did you spend on?</Text>
         <TextInput
           style={styles.input}
-          value={newExpense.name}
+          value={expense!.name}
           onChangeText={onChangeName}
         ></TextInput>
       </View>
@@ -77,8 +90,8 @@ export default function NewExpense() {
         <Text style={styles.label}>How Much did you spend?</Text>
         <TextInput
           style={styles.input}
-          keyboardType="numeric"
-          value={newExpense.amount.toString()}
+          inputMode="decimal"
+          value={expense!.amount.toString()}
           onChangeText={onChangeAmount}
         ></TextInput>
       </View>
@@ -87,7 +100,7 @@ export default function NewExpense() {
 
         <View style={styles.datePickerContainer}>
           <DateTimePicker
-            value={new Date(newExpense.date)}
+            value={new Date(expense!.date + "T00:00:00")}
             timeZoneName={timeZone}
             mode="date"
             display="spinner"
@@ -96,8 +109,8 @@ export default function NewExpense() {
         </View>
       </View>
 
-      <Pressable style={styles.pressable} onPress={onAddExpense}>
-        <Text style={styles.buttonText}>Add</Text>
+      <Pressable style={styles.pressable} onPress={saveExpense}>
+        <Text style={styles.buttonText}>Update</Text>
       </Pressable>
     </View>
   );

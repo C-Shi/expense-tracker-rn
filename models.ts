@@ -8,12 +8,18 @@ class Expense {
     date,
     name,
     amount,
+    id
   }: {
     date: string | Date;
     name: string;
     amount: number;
+    id?: string | undefined
   }) {
-    this.id = Math.floor(Math.random() * 10000).toString();
+    if (!id) {
+      this.id = Math.floor(Math.random() * 10000).toString();
+    } else {
+      this.id = id
+    }
     if (date instanceof Date) {
       this.date = date.toISOString().split("T")[0]
     } else {

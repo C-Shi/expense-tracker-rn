@@ -1,9 +1,14 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Expense } from "@/models";
+import { useRouter } from "expo-router";
 
 export default function ExpenseListItem({ expense }: { expense: Expense }) {
+  const router = useRouter();
   return (
-    <View style={styles.expenseContainer}>
+    <Pressable
+      style={styles.expenseContainer}
+      onPress={() => router.push(`/modal?page=edit&id=${expense.id}`)}
+    >
       <View>
         <Text>{expense.name}</Text>
         <Text>{expense.date}</Text>
@@ -11,7 +16,7 @@ export default function ExpenseListItem({ expense }: { expense: Expense }) {
       <View style={styles.expenseAmount}>
         <Text style={styles.expenseAmountText}>${expense.amount}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

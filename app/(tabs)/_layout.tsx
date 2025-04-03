@@ -14,7 +14,7 @@ export default function TabLayout() {
               marginRight: 20,
             }}
             onPress={() => {
-              router.push("/modal");
+              router.push("/modal?page=new");
             }}
           >
             <FontAwesome name="plus" size={24} color="black" />
