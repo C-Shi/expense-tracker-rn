@@ -54,10 +54,15 @@ export default function NewExpense() {
     setNewExpense({ ...newExpense, date: val! });
   }
 
-  function onAddExpense() {
+  async function onAddExpense() {
     if (newExpense.amount > 0 && newExpense.date && newExpense.name !== "") {
-      expensesCtx.addExpense(new Expense(newExpense));
-      navigation.goBack();
+      try {
+        await expensesCtx.addExpense(new Expense(newExpense));
+      } catch (err) {
+        console.error((err as Error).message);
+      } finally {
+        navigation.goBack();
+      }
     } else {
       alert("Please Fill all the required field");
     }

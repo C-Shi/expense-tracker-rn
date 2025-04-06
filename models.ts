@@ -1,6 +1,6 @@
 class Expense {
   id: string;
-  date: string;
+  date: Date;
   name: string;
   amount: number;
 
@@ -10,7 +10,7 @@ class Expense {
     amount,
     id
   }: {
-    date: string | Date;
+    date: Date;
     name: string;
     amount: number;
     id?: string | undefined
@@ -20,11 +20,7 @@ class Expense {
     } else {
       this.id = id
     }
-    if (date instanceof Date) {
-      this.date = date.toISOString().split("T")[0]
-    } else {
-      this.date = date
-    }
+    this.date = date
     this.name = name;
     this.amount = amount;
   }

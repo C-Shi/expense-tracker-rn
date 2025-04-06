@@ -54,23 +54,27 @@ export default function EditExpense({ id }: { id: string }) {
     setExpense({ ...expense, amount });
   }
 
-  function onDateChange(val: Date | undefined) {
-    const date = val?.toISOString().split("T")[0]!;
+  function onDateChange(date: Date) {
     setExpense({ ...expense, date });
   }
 
-  function saveExpense() {
+  async function saveExpense() {
     if (
       expense &&
       parseFloat(expense.amount) > 0 &&
       expense.date &&
       expense.name !== ""
     ) {
-      expensesCtx.updateExpense({
-        ...expense,
-        amount: parseFloat(expense.amount),
-      } as Expense);
-      navigation.goBack();
+      try {
+        await expensesCtx.updateExpense({
+          ...expense,
+          amount: parseFloat(expense.amount),
+        } as Expense);
+      } catch (err) {
+        alert((err as Error).message);
+      } finally {
+        navigation.goBack();
+      }
     } else {
       alert("Please Fill all the required field");
     }
@@ -100,11 +104,11 @@ export default function EditExpense({ id }: { id: string }) {
 
         <View style={styles.datePickerContainer}>
           <DateTimePicker
-            value={new Date(expense!.date + "T00:00:00")}
+            value={expense!.date}
             timeZoneName={timeZone}
             mode="date"
             display="spinner"
-            onChange={(_, date) => onDateChange(date)}
+            onChange={(event, date) => onDateChange(date!)}
           />
         </View>
       </View>

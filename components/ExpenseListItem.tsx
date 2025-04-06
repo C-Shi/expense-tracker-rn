@@ -7,7 +7,7 @@ import {
 import { Expense } from "@/models";
 import { useRouter } from "expo-router";
 import COLORS from "@/constant/COLORS";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { ExpenseContext } from "@/store/ExpenseContext";
 
 export default function ExpenseListItem({ expense }: { expense: Expense }) {
@@ -18,8 +18,12 @@ export default function ExpenseListItem({ expense }: { expense: Expense }) {
     router.push(`/modal?page=edit&id=${expense.id}`);
   };
 
-  const onSwipeCloseHandler = () => {
-    removeExpense(expense.id);
+  const onSwipeCloseHandler = async () => {
+    try {
+      await removeExpense(expense.id);
+    } catch (err) {
+      console.error((err as Error).message);
+    }
   };
   return (
     <GestureHandlerRootView>
@@ -27,7 +31,9 @@ export default function ExpenseListItem({ expense }: { expense: Expense }) {
         <Pressable style={styles.expenseContainer} onPress={onPressHandler}>
           <View>
             <Text style={styles.expenseText}>{expense.name}</Text>
-            <Text style={styles.expenseText}>{expense.date}</Text>
+            <Text style={styles.expenseText}>
+              {expense.date.toLocaleDateString("en-CA")}
+            </Text>
           </View>
           <View style={styles.expenseAmount}>
             <Text style={styles.expenseAmountText}>${expense.amount}</Text>

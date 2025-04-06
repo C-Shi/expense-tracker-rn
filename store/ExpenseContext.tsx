@@ -1,9 +1,14 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { Expense } from "@/models";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface ExpenseContextModel {
   expenses: Expense[];
-  addExpense: (expense: { date: string; name: string; amount: number }) => void;
+  addExpense: (expense: {
+    date: Date;
+    name: string;
+    amount: number;
+  }) => Promise<any>;
   removeExpense: (id: string) => void;
   updateExpense: (expense: Expense) => void;
   getRecent: (num: number | null) => Expense[];
@@ -18,28 +23,41 @@ export default function ExpenseContextProvider({
 }: {
   children: any;
 }) {
-  const [expenses, setExpense] = useState<Expense[]>([
-    new Expense({ date: "2024-09-01", amount: 15.6, name: "book" }),
-    new Expense({ date: "2024-09-02", amount: 46.0, name: "grocery" }),
-    new Expense({ date: "2024-09-03", amount: 23.0, name: "gas" }),
-    new Expense({ date: "2024-09-04", amount: 6.0, name: "lottery" }),
-    new Expense({ date: "2024-09-05", amount: 100.0, name: "house cleaning" }),
-    new Expense({ date: "2024-09-06", amount: 50, name: "restaurant" }),
-    new Expense({ date: "2024-09-07", amount: 60, name: "restaurant" }),
-    new Expense({ date: "2024-09-08", amount: 50, name: "restaurant" }),
-    new Expense({ date: "2024-09-09", amount: 120, name: "restaurant" }),
-    new Expense({ date: "2024-09-10", amount: 423, name: "hotel" }),
-    new Expense({ date: "2024-09-11", amount: 48.25, name: "restaurant" }),
-    new Expense({ date: "2024-09-12", amount: 48.25, name: "restaurant" }),
-    new Expense({ date: "2024-09-13", amount: 48.25, name: "restaurant" }),
-  ]);
+  const [expenses, setExpense] = useState<Expense[]>([]);
+  const [ready, setReady] = useState<Boolean>(false);
+  const URL = process.env.EXPO_PUBLIC_FIREBASE_URL;
 
-  const addExpense = (expense: any): void => {
-    setExpense((prev) => [...prev, new Expense(expense)]);
+  useEffect(() => {
+    _fetchExpense();
+  }, []);
+
+  const addExpense = async (expense: any): Promise<any> => {
+    const response = await fetch(URL + "/expenses.json", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(expense),
+    });
+
+    if (response.ok) {
+      const { name } = await response.json();
+      setExpense((prev) => [...prev, new Expense({ ...expense, id: name })]);
+    } else {
+      throw new Error(`HTTP Post Error! Status: ${response.status}`);
+    }
   };
 
-  const removeExpense = (id: string): void => {
-    setExpense((prev) => prev.filter((e) => e.id !== id));
+  const removeExpense = async (id: string): Promise<any> => {
+    const response = await fetch(URL + `/expenses/${id}.json`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setExpense((prev) => prev.filter((e) => e.id !== id));
+    } else {
+      throw new Error(`HTTP Delete Error! Status: ${response.status}`);
+    }
   };
 
   const getRecent = (num: number): Expense[] => {
@@ -48,15 +66,60 @@ export default function ExpenseContextProvider({
       .slice(0, num + 1);
   };
 
-  const updateExpense = (expense: Expense): void => {
-    setExpense((prev) =>
-      prev.map((e) => {
-        if (e.id == expense.id) {
-          return { ...expense, id: e.id };
-        }
-        return e;
-      })
-    );
+  const updateExpense = async (expense: Expense): Promise<any> => {
+    const response = await fetch(URL + `/expenses/${expense.id}.json`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: expense.name,
+        date: expense.date,
+        amount: expense.amount,
+      }),
+    });
+
+    if (response.ok) {
+      setExpense((prev) =>
+        prev.map((e) => {
+          if (e.id == expense.id) {
+            return { ...expense, id: e.id };
+          }
+          return e;
+        })
+      );
+    } else {
+      throw new Error(`HTTP Put Error! Status: ${response.status}`);
+    }
+  };
+
+  const _fetchExpense = async (): Promise<any> => {
+    try {
+      const response = await fetch(URL + "/expenses.json");
+      if (response.ok) {
+        const data = await response.json();
+        setExpense(() => {
+          const expenses = [];
+          for (const id in data) {
+            expenses.push(
+              new Expense({
+                id,
+                name: data[id].name,
+                date: new Date(data[id].date),
+                amount: data[id].amount,
+              })
+            );
+          }
+          return expenses;
+        });
+      } else {
+        throw new Error(`HTTP Get Expense Error! Status: ${response.status} `);
+      }
+    } catch (err) {
+      alert("Fetch Data Failed!");
+    } finally {
+      setReady(true);
+    }
   };
 
   const value = {
@@ -66,6 +129,10 @@ export default function ExpenseContextProvider({
     updateExpense,
     getRecent,
   } as ExpenseContextModel;
+
+  if (!ready) {
+    return <FontAwesome name="spinner" size={24} color="black" />;
+  }
 
   return (
     <ExpenseContext.Provider value={value}>{children}</ExpenseContext.Provider>
