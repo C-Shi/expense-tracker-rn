@@ -9,7 +9,7 @@ interface ExpenseContextModel {
     name: string;
     amount: number;
   }) => Promise<any>;
-  removeExpense: (id: string) => void;
+  removeExpense: (id: string) => Promise<any>;
   updateExpense: (expense: Expense) => void;
   getRecent: (num: number | null) => Expense[];
 }

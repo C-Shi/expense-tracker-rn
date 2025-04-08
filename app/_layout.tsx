@@ -1,35 +1,12 @@
-import { Stack } from "expo-router/stack";
-import ExpenseContextProvider from "@/store/ExpenseContext";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { router } from "expo-router";
-import { TouchableOpacity, StatusBar } from "react-native";
-import COLORS from "@/constant/COLORS";
+import AuthContextProvider from "@/store/AuthContext";
+import { Slot } from "expo-router";
+import { StatusBar } from "react-native";
 
 export default function RootLayout() {
   return (
-    <ExpenseContextProvider>
+    <AuthContextProvider>
       <StatusBar barStyle="light-content"></StatusBar>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="modal"
-          options={{
-            presentation: "modal",
-            headerRight: () => (
-              <TouchableOpacity
-                style={{
-                  marginRight: 20,
-                }}
-                onPress={() => {
-                  router.back();
-                }}
-              >
-                <FontAwesome name="close" size={24} color={COLORS.light} />
-              </TouchableOpacity>
-            ),
-          }}
-        />
-      </Stack>
-    </ExpenseContextProvider>
+      <Slot />
+    </AuthContextProvider>
   );
 }
