@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { Text } from "react-native";
+import Constants from "expo-constants";
 
 // Define the type for a user object stored in context, including authentication details.
 type User = {
@@ -25,6 +26,7 @@ interface AuthContextModel {
 
 // Firebase authentication base URL for REST API requests.
 const AUTH_URL = "https://identitytoolkit.googleapis.com/v1";
+const apiKey = Constants.expoConfig?.extra?.firebaseApiKey;
 
 // Create a context to store authentication state and actions.
 const AuthContext = createContext({} as AuthContextModel);
@@ -59,6 +61,7 @@ export default function AuthContextProvider({ children }: { children: any }) {
   // Function to initialize the app by checking for stored user credentials and refreshing the session.
   const appStart = async () => {
     const storedUser = await SecureStore.getItemAsync("user"); // Retrieve stored user data from SecureStore.
+    console.log("storedUser is ", storedUser);
     if (storedUser) {
       const storedUserObj = JSON.parse(storedUser); // Parse the stored user data.
 
@@ -92,9 +95,9 @@ export default function AuthContextProvider({ children }: { children: any }) {
   ): Promise<any> => {
     // Construct the appropriate URL for signIn or signUp action based on the passed parameter.
     if (action == "signIn") {
-      var URL = `${AUTH_URL}/accounts:signInWithPassword?key=${process.env.EXPO_PUBLIC_FIREBASE_API_KEY}`;
+      var URL = `${AUTH_URL}/accounts:signInWithPassword?key=${apiKey}`;
     } else if (action == "signUp") {
-      var URL = `${AUTH_URL}/accounts:signUp?key=${process.env.EXPO_PUBLIC_FIREBASE_API_KEY}`;
+      var URL = `${AUTH_URL}/accounts:signUp?key=${apiKey}`;
     } else {
       throw new Error("Unidentified action"); // Throw an error if an invalid action is passed.
     }
@@ -124,7 +127,7 @@ export default function AuthContextProvider({ children }: { children: any }) {
 
   // Function to refresh the session using a valid refresh token.
   const refreshSession = async (refreshToken: string): Promise<any> => {
-    const URL = `https://securetoken.googleapis.com/v1/token?key=${process.env.EXPO_PUBLIC_FIREBASE_API_KEY}`;
+    const URL = `https://securetoken.googleapis.com/v1/token?key=${apiKey}`;
 
     // Make the HTTP POST request to Firebase secure token endpoint.
     const response = await fetch(URL, {

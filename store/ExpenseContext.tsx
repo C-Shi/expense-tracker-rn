@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { Expense } from "@/models";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Constants from "expo-constants";
 
 interface ExpenseContextModel {
   expenses: Expense[];
@@ -25,7 +26,7 @@ export default function ExpenseContextProvider({
 }) {
   const [expenses, setExpense] = useState<Expense[]>([]);
   const [ready, setReady] = useState<Boolean>(false);
-  const URL = process.env.EXPO_PUBLIC_FIREBASE_URL;
+  const URL = Constants.expoConfig?.extra?.firebaseURL;
 
   useEffect(() => {
     _fetchExpense();

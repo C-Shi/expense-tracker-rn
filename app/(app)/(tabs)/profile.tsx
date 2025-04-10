@@ -1,15 +1,30 @@
 import { AuthContext } from "@/store/AuthContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { View, Pressable, Image, Text, StyleSheet } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 export default function Profile() {
   const userCtx = useContext(AuthContext);
+  const [avatar, setAvatar] = useState("https://i.pravatar.cc/150?img=3");
+
+  const pickImage = async () => {
+    await ImagePicker.requestCameraPermissionsAsync();
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
+  };
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: "https://i.pravatar.cc/150?img=3" }}
-        style={styles.avatar}
-      />
+      <Pressable onPress={pickImage}>
+        <Image source={{ uri: avatar }} style={styles.avatar} />
+      </Pressable>
       <Text style={styles.name}>John Doe</Text>
       <Text style={styles.email}>john.doe@example.com</Text>
 
